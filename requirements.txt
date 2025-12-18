@@ -1,4 +1,5 @@
 pyttsx3
-speechrecognition
+SpeechRecognition
 wikipedia
 pypiwin32
+PyAudio

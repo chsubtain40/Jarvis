@@ -44,7 +44,7 @@ try:
     
     # Set speech rate and volume for better experience
     engine.setProperty("rate", 150)  # Speed of speech
-    engine.setProperty("volume", 0.9)  # Volume level (0.0 to 1.0)
+    engine.setProperty("volume", 1.0)  # Volume level (0.0 to 1.0)
     
     # Test the TTS engine
     print("Testing TTS engine...")
