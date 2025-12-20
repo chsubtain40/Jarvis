@@ -64,7 +64,7 @@ def speak(text: str) -> None:
     Falls back to printing an error if TTS fails.
     """
     global engine
-    print(f"Jarvis: {text}")
+    print(f"Jarvis: {text}", flush=True)
     
     if engine is None:
         print("[X] TTS engine not initialized. Cannot speak.")
@@ -72,33 +72,33 @@ def speak(text: str) -> None:
         return
     
     try:
-        # Clear any pending speech before adding new text
-        engine.stop()
-        
-        # Add the text to speak
+        # Add the text to speak (DO NOT use engine.stop() - it breaks pyttsx3 on Windows!)
         engine.say(text)
         
         # Run and wait for speech to complete
         engine.runAndWait()
         
-        # Small delay to ensure engine completes properly
-        time.sleep(0.1)
-        
-        print("[OK] Speech completed")
+        print("[OK] Speech completed", flush=True)
         
     except RuntimeError as e:
-        print(f"[X] Runtime error in speak(): {e}")
+        print(f"[X] Runtime error in speak(): {e}", flush=True)
         print("Text that failed to speak:", text)
         print("Attempting to reinitialize TTS engine...")
         
         # Try to reinitialize the engine
         try:
+            # Properly dispose of old engine
+            try:
+                del engine
+            except:
+                pass
+                
             engine = pyttsx3.init("sapi5", debug=False)
             voices = engine.getProperty("voices")
             if len(voices) > 0:
                 # Try to find a good voice
                 for voice in voices:
-                    if "female" in voice.name.lower() or "zira" in voice.name.lower():
+                    if "female" in voice.name.lower() or "zira" in voice.name.lower() or "hazel" in voice.name.lower():
                         engine.setProperty("voice", voice.id)
                         break
                 else:
@@ -111,14 +111,13 @@ def speak(text: str) -> None:
             # Try speaking again with the new engine
             engine.say(text)
             engine.runAndWait()
-            time.sleep(0.1)
             
         except Exception as reinit_error:
             print(f"Failed to reinitialize TTS: {reinit_error}")
             engine = None
             
     except Exception as e:
-        print(f"[X] Unexpected error in speak(): {e}")
+        print(f"[X] Unexpected error in speak(): {e}", flush=True)
         print("Text that failed to speak:", text)
 
 def test_tts() -> bool:
